@@ -6,6 +6,8 @@ import os
 import time
 import logging
 
+os.write(1,b'Something was executed.\n')
+
 # Configure Streamlit page
 st.set_page_config(
     page_title="Resume Analyzer",
