@@ -3,11 +3,8 @@ from groq import Groq
 import PyPDF2
 import io
 import os
-from dotenv import load_dotenv
 import time
 
-# Load environment variables
-load_dotenv()
 
 # Configure Streamlit page
 st.set_page_config(
