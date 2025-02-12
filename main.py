@@ -121,6 +121,7 @@ def main():
                     # Add a small delay to show the spinner
                     time.sleep(1)
                     analysis = analyze_resume(client, resume_text, job_description)
+                    print(analysis)
                     if analysis:
                         st.markdown(f'<div class="analysis-box">{analysis}</div>', 
                                   unsafe_allow_html=True)
