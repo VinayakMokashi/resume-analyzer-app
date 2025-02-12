@@ -4,6 +4,7 @@ import PyPDF2
 import io
 import os
 import time
+import logging
 
 # Configure Streamlit page
 st.set_page_config(
@@ -120,8 +121,8 @@ def main():
                     # Add a small delay to show the spinner
                     time.sleep(1)
                     analysis = analyze_resume(client, resume_text, job_description)
-                    os.write(1,f"Analysis results: {analysis}")
-                    
+                    logging.info(f"Analysis results: {analysis}")
+
                     if analysis:
                         st.markdown(f'<div class="analysis-box">{analysis}</div>', 
                                   unsafe_allow_html=True)
