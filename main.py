@@ -28,19 +28,19 @@ try:
                           aws_access_key_id=aws_access_key_id,
                           aws_secret_access_key=aws_secret_access_key)
 
+
+
+    def upload_item_to_dynamodb(table_name, item):
+        table = dynamodb.Table(table_name)
+        
+        try:
+            response = table.put_item(Item=item)
+            print(f"Item uploaded successfully: {response}")
+        except ClientError as e:
+            print(f"Error uploading item: {e.response['Error']['Message']}")
+
 except:
     pass
-
-def upload_item_to_dynamodb(table_name, item):
-    table = dynamodb.Table(table_name)
-    
-    try:
-        response = table.put_item(Item=item)
-        print(f"Item uploaded successfully: {response}")
-    except ClientError as e:
-        print(f"Error uploading item: {e.response['Error']['Message']}")
-
-
 
 # Configure Streamlit page
 st.set_page_config(
