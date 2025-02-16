@@ -5,6 +5,37 @@ import io
 import os
 import time
 import logging
+from dotenv import load_dotenv
+import uuid
+
+try:
+    load_dotenv()
+except:
+    pass
+
+import boto3
+from botocore.exceptions import ClientError
+
+# Set up the DynamoDB client using environment variables
+aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID')
+aws_secret_access_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
+aws_region = os.environ.get('AWS_REGION', 'ap-south-1')
+
+dynamodb = boto3.resource('dynamodb',
+                          region_name=aws_region,
+                          aws_access_key_id=aws_access_key_id,
+                          aws_secret_access_key=aws_secret_access_key)
+
+def upload_item_to_dynamodb(table_name, item):
+    table = dynamodb.Table(table_name)
+    
+    try:
+        response = table.put_item(Item=item)
+        print(f"Item uploaded successfully: {response}")
+    except ClientError as e:
+        print(f"Error uploading item: {e.response['Error']['Message']}")
+
+
 
 # Configure Streamlit page
 st.set_page_config(
@@ -20,7 +51,13 @@ st.markdown("""
         max-width: 1200px;
         margin: 0 auto;
     }
-    .analysis-box {
+    .analysis-box-think {
+        padding: 20px;
+        border-radius: 10px;
+        background-color: #f0f2f6;
+        margin: 10px 0;
+    }
+    .analysis-box-result {
         padding: 20px;
         border-radius: 10px;
         background-color: #f0f2f6;
@@ -121,10 +158,23 @@ def main():
                     # Add a small delay to show the spinner
                     time.sleep(1)
                     analysis = analyze_resume(client, resume_text, job_description)
-                    logging.error(f"Analysis results: {analysis}")
+                    # logging.info(f"Analysis results: {analysis}")
+                    logging.error(f"Think: {analysis.split('</think>')[0]}")
+                    logging.error(f"Result {analysis.split('</think>')[1]}")
+
+                    table_name = 'resume-analyzer'
+                    item = {
+                        'id': str(uuid.uuid4()),
+                        'resume_parse': resume_text,
+                        'think': analysis.split('</think>')[0],
+                        'response': analysis.split('</think>')[1]
+                    }
+
+                    upload_item_to_dynamodb(table_name, item)
 
                     if analysis:
-                        st.markdown(f'<div class="analysis-box">{analysis}</div>', 
+                        st.markdown(f"""<div class="analysis-box-think"><h2>Thinking</h2>{analysis.split('</think>')[0]}</div> 
+                        <div class="analysis-box-result"><h2>Response</h2>{analysis.split('</think>')[1]}</div>""", 
                                   unsafe_allow_html=True)
                         
                         # Add download button for analysis
@@ -135,6 +185,8 @@ def main():
                             file_name="resume_analysis.txt",
                             mime="text/plain"
                         )
+
+                        
 
     # Add helpful information
     with st.expander("💡 Tips for better results"):
