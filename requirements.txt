@@ -1,3 +1,3 @@
 groq
 PyPDF2
-dotenv
+python-dotenv
