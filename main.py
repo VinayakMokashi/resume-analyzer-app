@@ -151,13 +151,13 @@ def main():
     client = initialize_groq_client()
 
 
-    # name = st.text_input("Name")
-    # email = st.text_input("email")
-    # contact_no = st.text_input("contact_no")
-    # city = st.text_input("city")
-    # linkedin_profile = st.text_input("linkedin_profile")
-    # preferred_job_role = st.text_input("preferred_job_role")
-    # preferred_job_location = st.text_input("preferred_job_location")
+    name = st.text_input("Name")
+    email = st.text_input("email")
+    contact_no = st.text_input("contact_no")
+    city = st.text_input("city")
+    linkedin_profile = st.text_input("linkedin_profile")
+    preferred_job_role = st.text_input("preferred_job_role")
+    preferred_job_location = st.text_input("preferred_job_location")
 
     # File upload for resume
     uploaded_file = st.file_uploader("Upload your resume (PDF)", type=['pdf'])
