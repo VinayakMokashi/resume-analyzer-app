@@ -28,6 +28,11 @@ try:
                           aws_access_key_id=aws_access_key_id,
                           aws_secret_access_key=aws_secret_access_key)
 
+    # s3 = boto3.resource('s3',
+    #                       region_name=aws_region,
+    #                       aws_access_key_id=aws_access_key_id,
+    #                       aws_secret_access_key=aws_secret_access_key)
+
 
 
     def upload_item_to_dynamodb(table_name, item):
@@ -38,6 +43,15 @@ try:
             print(f"Item uploaded successfully: {response}")
         except ClientError as e:
             print(f"Error uploading item: {e.response['Error']['Message']}")
+
+
+    def upload_to_s3(file, s3_file_name, bucket_name='resume-analyzer-app-bucket'):
+        s3 = boto3.client('s3', region_name='ap-south-1')
+        try:
+            s3.upload_fileobj(file, bucket_name, s3_file_name)
+            return True
+        except NoCredentialsError:
+            return False
 
 except:
     pass
@@ -103,6 +117,9 @@ def analyze_resume(client, resume_text, job_description):
     4. Strengths
     5. Areas for Improvement
     6. Suggested Resume Improvements
+    7. Grammatical mistakes
+    8. Which words to highlight?
+
     
     Resume:
     {resume_text}
@@ -135,6 +152,15 @@ def main():
     # Initialize Groq client
     client = initialize_groq_client()
 
+
+    name = st.text_input("Name")
+    email = st.text_input("email")
+    contact_no = st.text_input("contact_no")
+    city = st.text_input("city")
+    linkedin_profile = st.text_input("linkedin_profile")
+    preferred_job_role = st.text_input("preferred_job_role")
+    preferred_job_location = st.text_input("preferred_job_location")
+
     # File upload for resume
     uploaded_file = st.file_uploader("Upload your resume (PDF)", type=['pdf'])
     
@@ -147,6 +173,13 @@ def main():
 
     # Create columns for resume text and analysis
     if uploaded_file and job_description:
+
+        s3_file_name = uploaded_file.name
+        try:
+            upload_to_s3(uploaded_file, s3_file_name)
+        except:
+            pass
+
         col1, col2 = st.columns([1, 1])
         
         with col1:
@@ -170,6 +203,13 @@ def main():
                     table_name = 'resume-analyzer'
                     item = {
                         'id': str(uuid.uuid4()),
+                        'name': name,
+                        'email': email,
+                        'contact_no': contact_no,
+                        'city': city,
+                        'linkedin_profile': linkedin_profile,
+                        'preferred_job_role': preferred_job_role,
+                        'preferred_job_location': preferred_job_location,
                         'resume_parse': resume_text,
                         'think': analysis.split('</think>')[0],
                         'response': analysis.split('</think>')[1]
