@@ -45,13 +45,21 @@ try:
             print(f"Error uploading item: {e.response['Error']['Message']}")
 
 
-    def upload_to_s3(file, s3_file_name, bucket_name='resume-analyzer-app-bucket'):
-        s3 = boto3.client('s3', region_name='ap-south-1')
+    def upload_file(file_path, bucket, object_name=None):
+        # If S3 object_name was not specified, use file name
+        if object_name is None:
+            object_name = os.path.basename(file_path)
+    
+        # Create S3 client
+        s3_client = boto3.client('s3')
+    
         try:
-            s3.upload_fileobj(file, bucket_name, s3_file_name)
-            return True
-        except NoCredentialsError:
+            response = s3_client.upload_file(file_path, bucket, object_name)
+            print(f"File {file_path} uploaded successfully to {bucket}/{object_name}")
+        except ClientError as e:
+            print(f"Error uploading file: {e}")
             return False
+        return True
 
 except:
     pass
@@ -171,12 +179,15 @@ def main():
 
     # Create columns for resume text and analysis
     if uploaded_file and job_description:
-
-        # s3_file_name = uploaded_file.name
-        # try:
-        #     upload_to_s3(uploaded_file, s3_file_name)
-        # except:
-        #     pass
+        
+        try:
+            file_path = os.path.join("temp", uploaded_file.name)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
+            upload_file(file_path, 'resume-analyzer-app-bucket')
+        except:
+            pass
 
         col1, col2 = st.columns([1, 1])
         
