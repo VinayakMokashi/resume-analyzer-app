@@ -1,6 +1,8 @@
 .env
 rootkey.csv
 *.csv
+*.pem
+DEPLOYMENT_EVIDENCE.md
 temp/
 venv/
 __pycache__/
