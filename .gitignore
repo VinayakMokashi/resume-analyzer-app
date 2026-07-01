@@ -1,1 +1,6 @@
 .env
+rootkey.csv
+*.csv
+temp/
+venv/
+__pycache__/

@@ -51,7 +51,10 @@ try:
             object_name = os.path.basename(file_path)
     
         # Create S3 client
-        s3_client = boto3.client('s3')
+        s3_client = boto3.client('s3',
+                                 region_name=aws_region,
+                                 aws_access_key_id=aws_access_key_id,
+                                 aws_secret_access_key=aws_secret_access_key)
     
         try:
             response = s3_client.upload_file(file_path, bucket, object_name)
@@ -138,7 +141,7 @@ def analyze_resume(client, resume_text, job_description):
     
     try:
         response = client.chat.completions.create(
-            model="deepseek-r1-distill-qwen-32b",
+            model=os.environ.get("GROQ_MODEL", "qwen/qwen3-32b"),
             messages=[
                 {"role": "system", "content": "You are an expert resume analyzer and career coach."},
                 {"role": "user", "content": prompt}
@@ -150,6 +153,17 @@ def analyze_resume(client, resume_text, job_description):
     except Exception as e:
         st.error(f"Error during analysis: {str(e)}")
         return None
+
+def split_thinking(analysis):
+    """Split a reasoning-model response into (thinking, result).
+
+    Handles models that wrap their reasoning in <think>...</think> as well as
+    plain models that return no think block at all.
+    """
+    if analysis and "</think>" in analysis:
+        think, result = analysis.split("</think>", 1)
+        return think.replace("<think>", "").strip(), result.strip()
+    return "", (analysis or "").strip()
 
 def main():
     st.title("📝 Resume Analyzer")
@@ -205,9 +219,10 @@ def main():
                     # Add a small delay to show the spinner
                     time.sleep(1)
                     analysis = analyze_resume(client, resume_text, job_description)
+                    think, result = split_thinking(analysis)
                     # logging.info(f"Analysis results: {analysis}")
-                    logging.error(f"Think: {analysis.split('</think>')[0]}")
-                    logging.error(f"Result {analysis.split('</think>')[1]}")
+                    logging.error(f"Think: {think}")
+                    logging.error(f"Result {result}")
 
                     table_name = 'resume-analyzer'
                     item = {
@@ -220,8 +235,8 @@ def main():
                         'preferred_job_role': preferred_job_role,
                         'preferred_job_location': preferred_job_location,
                         'resume_parse': resume_text,
-                        'think': analysis.split('</think>')[0],
-                        'response': analysis.split('</think>')[1]
+                        'think': think,
+                        'response': result
                     }
                     try:
                         upload_item_to_dynamodb(table_name, item)
@@ -229,8 +244,8 @@ def main():
                         pass
 
                     if analysis:
-                        st.markdown(f"""<div class="analysis-box-think"><h2>Thinking</h2>{analysis.split('</think>')[0]}</div> 
-                        <div class="analysis-box-result"><h2>Response</h2>{analysis.split('</think>')[1]}</div>""", 
+                        st.markdown(f"""<div class="analysis-box-think"><h2>Thinking</h2>{think}</div>
+                        <div class="analysis-box-result"><h2>Response</h2>{result}</div>""",
                                   unsafe_allow_html=True)
                         
                         # Add download button for analysis
