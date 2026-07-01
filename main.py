@@ -199,7 +199,7 @@ def main():
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             with open(file_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
-            upload_file(file_path, 'resume-analyzer-app-bucket')
+            upload_file(file_path, os.environ.get('S3_BUCKET', 'resume-analyzer-app-bucket'))
         except:
             pass
 
@@ -224,7 +224,7 @@ def main():
                     logging.error(f"Think: {think}")
                     logging.error(f"Result {result}")
 
-                    table_name = 'resume-analyzer'
+                    table_name = os.environ.get('DYNAMODB_TABLE', 'resume-analyzer')
                     item = {
                         'id': str(uuid.uuid4()),
                         'name': name,
