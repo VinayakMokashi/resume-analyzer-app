@@ -4,7 +4,7 @@ This guide walks through deploying the app on an **AWS EC2** instance, with
 **S3** for resume storage and **DynamoDB** for results. It reflects the exact
 setup used for this project (region **`ap-south-1`** / Mumbai).
 
-> 💸 **Cost warning:** these steps create billable AWS resources. Everything
+> **Cost warning:** these steps create billable AWS resources. Everything
 > here fits the AWS Free Tier if you use a `t2.micro` instance, but you must
 > **tear it all down** when finished (see the last section) to avoid charges.
 
@@ -204,7 +204,7 @@ description, and click **Analyze Resume**.
 
 ---
 
-## 8. Teardown (delete everything to stop charges) 💸
+## 8. Teardown (delete everything to stop charges)
 
 Do these in the Console when you are finished:
 

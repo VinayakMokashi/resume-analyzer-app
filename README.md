@@ -13,13 +13,13 @@ designed to be deployed on an **AWS EC2** instance.
 
 ## Features
 
-- 📄 Upload a resume as a PDF and paste a target job description
-- 🤖 AI analysis via Groq (default model: `qwen/qwen3-32b`, a reasoning model)
-- 🧠 Separates the model's reasoning ("Thinking") from its final answer
-- ☁️ Stores uploaded resumes in **Amazon S3**
-- 🗃️ Stores each analysis + metadata in **Amazon DynamoDB**
-- ⬇️ Download the analysis as a text file
-- 🛟 Runs fine locally with **no AWS at all** (cloud writes are best-effort)
+- Upload a resume as a PDF and paste a target job description
+- AI analysis via Groq (default model: `qwen/qwen3-32b`, a reasoning model)
+- Separates the model's reasoning ("Thinking") from its final answer
+- Stores uploaded resumes in **Amazon S3**
+- Stores each analysis + metadata in **Amazon DynamoDB**
+- Download the analysis as a text file
+- Runs fine locally with **no AWS at all** (cloud writes are best-effort)
 
 ---
 
@@ -199,7 +199,7 @@ The app is a single file organized into three layers:
 
 ---
 
-## Cost & teardown ⚠️
+## Cost & teardown
 
 Running this on AWS creates billable resources. When you are done, **delete
 them** to avoid charges:
