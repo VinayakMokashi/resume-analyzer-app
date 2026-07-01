@@ -23,6 +23,34 @@ designed to be deployed on an **AWS EC2** instance.
 
 ---
 
+## Demo / Screenshots
+
+The app deployed and running live on an AWS EC2 instance.
+
+**The app UI (served from EC2):**
+
+![Resume Analyzer home page](screenshots/01-app-home.png)
+
+**The AI analysis in action:**
+
+![AI analysis output](screenshots/02-analysis-result.png)
+
+### The AWS resources backing it
+
+**EC2 — the instance hosting the app:**
+
+![EC2 instance running](screenshots/03-ec2-instance.png)
+
+**S3 — the uploaded resume stored in the bucket:**
+
+![S3 bucket with the uploaded resume](screenshots/04-s3-bucket.png)
+
+**DynamoDB — the results table:**
+
+![DynamoDB table](screenshots/05-dynamodb-item.png)
+
+---
+
 ## Architecture
 
 ```
