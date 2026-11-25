@@ -215,4 +215,4 @@ See the teardown checklist at the end of **[DEPLOYMENT.md](DEPLOYMENT.md)**.
 
 ## License
 
-This project is for educational purposes.
+Released under the [MIT License](LICENSE).
